@@ -2,7 +2,7 @@
 // ----------------------------------------------------
 // Full pre-cache of app shell + cache-first runtime
 // ----------------------------------------------------
-const CACHE_VERSION = 'edf-precache-v16'; // ⬅️ bump this when you change any file below
+const CACHE_VERSION = 'edf-precache-v17'; // ⬅️ bump this when you change any file below
 
 // Everything the app needs to run fully offline.
 // Keep this list in sync with your repo contents.
