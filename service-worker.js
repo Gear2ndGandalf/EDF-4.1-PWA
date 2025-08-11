@@ -2,7 +2,7 @@
 // ----------------------------------------------------
 // Full pre-cache of app shell + cache-first runtime
 // ----------------------------------------------------
-const CACHE_VERSION = 'edf-precache-v5'; // ⬅️ bump this when you change any file below
+const CACHE_VERSION = 'edf-precache-v6'; // ⬅️ bump this when you change any file below
 
 // Everything the app needs to run fully offline.
 // Keep this list in sync with your repo contents.
@@ -31,9 +31,9 @@ const PRECACHE_URLS = [
   './EDF_Logo.gif',
 
   // Icons
-  './icons/icon-192.png',
-  './icons/icon-512.png',
-  './icons/icon-180.png', // if present (safe to keep even if missing on some builds)
+  './icon-192.png',
+  './icon-512.png',
+  './icon-180.png',
 ];
 
 // Utility: same-origin check
