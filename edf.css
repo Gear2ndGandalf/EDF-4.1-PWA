@@ -202,28 +202,32 @@ a.back-button:hover {
 
 /* Main page (logo + big menu) */
 .gif-container {
-  position: absolute;
-  top: -9vh;
-  left: 50%;
-  transform: translateX(-50%);
+  position: relative;
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;   /* space from very top */
 }
 .gif-container img {
-  max-width: 90vw;
+  max-width: 520px;
+  width: 80vw;
   height: auto;
   display: block;
 }
+
+/* Button stack — positioned halfway between logo and bottom tools */
 .button-list {
   position: absolute;
-  top: 30%;
-  bottom: 15%;
+  top: 45%;                      /* halfway-ish down the page */
   left: 50%;
   transform: translateX(-50%);
+  width: 415px;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
-  height: 55%;
-  width: 415px;
+  gap: 14px;
+  align-items: stretch;
 }
+
+/* Buttons unchanged */
 .button-list a {
   display: block;
   text-align: center;
