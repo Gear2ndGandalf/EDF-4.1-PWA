@@ -8,30 +8,36 @@
   background: mediumseagreen; /* no color jump on hover */
   transform: scale(1.025);
 }
-/* Backup/restore tools on Main */
+/* Backup/restore tools on Main — tiny, side-by-side, pinned to bottom */
 .backup-tools{
-  position: fixed;                   /* stays anchored when page scrolls */
-  left: 50%;
-  transform: translateX(-50%);
-  bottom: calc(env(safe-area-inset-bottom, 0px) + 16px); /* iOS safe area */
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0; /* very bottom */
+  padding: 6px env(safe-area-inset-right, 0px)
+           calc(env(safe-area-inset-bottom, 0px) + 6px)
+           env(safe-area-inset-left, 0px);
   display: flex;
-  gap: 12px;
-  flex-wrap: wrap;                   /* wrap on narrow screens */
   justify-content: center;
-  z-index: 20;                       /* sit above the absolute menu */
+  gap: 8px;
+  z-index: 1000; /* above the main buttons */
 }
 
 .backup-tools button{
-  padding: 10px 16px;
+  padding: 6px 10px;        /* small */
+  min-height: 32px;         /* comfy enough to tap */
+  font-size: 0.85rem;       /* small text */
   border: 1px solid #fff;
   background: rgba(0,102,204,.6);
   color: #fff;
-  font-size: 1rem;
   font-weight: bold;
   cursor: pointer;
+  border-radius: 4px;
   transition: background .2s, transform .1s;
-  min-height: 44px;                  /* comfy touch target */
 }
 
-.backup-tools button:hover{ background: rgba(51,153,255,1); transform: scale(1.02); }
+.backup-tools button:hover { background: rgba(51,153,255,1); transform: scale(1.02); }
 .backup-tools button:active{ transform: scale(0.98); }
+
+/* ensure the big menu doesn't sit above the tools */
+.button-list { z-index: 1; }
