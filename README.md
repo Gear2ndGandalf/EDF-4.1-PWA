@@ -12,3 +12,5 @@ Site: https://gear2ndgandalf.github.io/EDF-4.1-PWA
 This is a weapons checklist I tell you what.
 
 Note: The edf.css is currently formated for mobile devices. The layout will look weird on desktops or in landscape.
+
+This is meant to be used offline as I have yet to implement a login function for individual user accounts (if that is even possible with this).
