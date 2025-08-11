@@ -1,0 +1,234 @@
+@font-face {
+  font-family: 'MyFont';
+  src: url('perfect-future.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+/* Global font + 1px black text border */
+* {
+  font-family: 'MyFont', Arial, sans-serif;
+  color: white;
+  text-shadow:
+    -1px -1px 0 black,
+     1px -1px 0 black,
+    -1px  1px 0 black,
+     1px  1px 0 black;
+}
+
+/* Page base */
+html, body {
+  height: 100%;
+  margin: 0;
+  background: #122;
+  color: #fff;
+}
+
+/* Top bar */
+.top-bar {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 20px;
+}
+
+/* Back button */
+a.back-button {
+  display: inline-block;
+  width: 120px;
+  height: 90px;
+  line-height: 38px;
+  text-align: center;
+  background: rgba(0,102,204,.6);
+  color: #fff;
+  font-size: 6em;
+  font-weight: bold;
+  text-decoration: none;
+  border: 1px solid #fff;
+  border-radius: 0;
+  transition: .2s transform, .3s background;
+}
+a.back-button:hover {
+  background: rgba(51,153,255,1);
+  transform: scale(1.05);
+}
+
+/* Save button */
+.save-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 90px;
+  padding: 0 38px;
+  border: 1px solid #fff;
+  background: mediumseagreen;
+  color: #fff;
+  font-size: 1.6em;
+  font-weight: bold;
+  box-sizing: border-box;
+  cursor: pointer;
+  /* (no extra text-shadow here — global rule already applies) */
+}
+.save-button:hover { background: springgreen; }
+
+/* Save button disabled state */
+.save-button.is-disabled {
+  background: slategray;       /* stays grey */
+  opacity: 0.9;
+  cursor: default;
+  pointer-events: none;        /* not clickable */
+  transform: none;             /* no hover scale from elsewhere */
+}
+.save-button.is-disabled:hover {
+  background: slategray;       /* no hover color change */
+  transform: none;
+}
+
+/* Title + global counter (+ space for Select All tools on the right) */
+.title-counter {
+  display: flex;
+  align-items: center;
+  justify-content: left; /* Center items horizontally */
+  position: relative;      /* For absolute positioning of bulk tools */
+  gap: 15px;
+  font-size: 1.4em;
+  font-weight: bold;
+  margin: 10px 20px;
+}
+
+/* Right-side bulk tools next to counter */
+.bulk-tools {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.9em;
+  position: absolute;
+  right: 0;   /* stick to right edge of title-counter */
+}
+.bulk-toggle input {
+  transform: scale(1.2);
+  vertical-align: middle;
+}
+
+/* Global counter states */
+#global-count {
+  font-size: 1em;
+  font-weight: 400;
+  padding: 0 10px;
+  border: 1px solid rgba(255,255,255,.65);
+  background: rgba(0,0,0,.25);
+  border-radius: 0;
+  transition: color .4s, text-shadow .4s, border-color .4s;
+}
+#global-count.low      { color: crimson;        text-shadow: 0 0 5px rgba(255,0,0,.8);   border-color: rgba(255,0,0,.8); }
+#global-count.medium   { color: orange;         text-shadow: 0 0 5px rgba(255,255,0,.8); border-color: rgba(255,255,0,.8); }
+#global-count.complete { color: mediumseagreen; text-shadow: 0 0 8px rgba(0,255,0,.9);   border-color: rgba(0,255,0,.8); }
+
+/* Category panels */
+.category {
+  border: 1px solid #fff;
+  margin: 10px auto;
+  width: 90%;
+  max-width: 700px;
+  background: rgba(0,0,0,.25);
+}
+.category-header {
+  padding: 15px 18px;
+  background: rgba(0,102,204,.6);
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  user-select: none;
+  font-size: 1.5em;
+}
+.category-header .header-title { text-align: left; }
+.category-header .header-count { text-align: right; flex: 0 0 auto; margin-left: 12px; }
+
+/* 🔹 Behind weapon list names — slategray */
+.category-items {
+  display: none;
+  padding: 10px 16px 14px;
+  background: slategray !important; /* override per-page defaults */
+}
+.category-items label {
+  display: block;
+  padding: 5px 0;
+  font-size: 1.2em;
+}
+
+/* Save toast — centered & larger */
+#toast {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(.9);
+  padding: 22px 28px;
+  min-width: 280px;
+  max-width: 80vw;
+  text-align: center;
+
+  background: rgba(0,0,0,.85);
+  color: #fff;
+  border: 2px solid #fff;
+  border-radius: 8px;
+  box-shadow: 0 12px 30px rgba(0,0,0,.45);
+
+  font-size: 2em;
+  z-index: 1000;
+
+  opacity: 0;
+  visibility: hidden;
+  transition:
+    opacity .25s ease,
+    transform .25s ease,
+    visibility .25s ease;
+}
+
+#toast.show {
+  visibility: visible;
+  opacity: 1;
+  transform: translate(-50%, -50%) scale(1);
+}
+
+/* Main page (logo + big menu) */
+.gif-container {
+  position: absolute;
+  top: -9vh;
+  left: 50%;
+  transform: translateX(-50%);
+}
+.gif-container img {
+  max-width: 90vw;
+  height: auto;
+  display: block;
+}
+.button-list {
+  position: absolute;
+  top: 30%;
+  bottom: 15%;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 55%;
+  width: 415px;
+}
+.button-list a {
+  display: block;
+  text-align: center;
+  padding: 20px;
+  background: rgba(0,102,204,.6);
+  color: #fff;
+  font-size: 2.8em;
+  font-weight: bold;
+  text-decoration: none;
+  border-radius: 0;
+  border: 1px solid #fff;
+  transition: background .3s, transform .2s;
+}
+.button-list a:hover {
+  background: rgba(51,153,255,1);
+  transform: scale(1.025);
+}

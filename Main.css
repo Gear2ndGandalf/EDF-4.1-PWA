@@ -1,0 +1,11 @@
+@import url('edf.css');
+/* Turn class buttons green when complete */
+.button-list a.complete {
+  background: mediumseagreen !important;
+  border-color: #fff;
+}
+.button-list a.complete:hover {
+  background: mediumseagreen; /* no color jump on hover */
+  transform: scale(1.025);
+}
+/* (nothing extra for now, but you can add Main-only tweaks here) */
