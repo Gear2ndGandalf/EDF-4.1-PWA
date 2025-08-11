@@ -24,10 +24,11 @@ html, body {
   color: #fff;
 }
 
-/* Top bar */
+/* Top bar: center the Back + Save buttons as a group */
 .top-bar {
   display: flex;
   align-items: center;
+  justify-content: center; /* center as a group */
   gap: 20px;
   padding: 20px;
 }
@@ -84,31 +85,38 @@ a.back-button:hover {
   transform: none;
 }
 
-/* Title + global counter (+ space for Select All tools on the right) */
+/* Title + global counter (+ tools) — centered & tidy on all sizes */
 .title-counter {
   display: flex;
+  flex-wrap: wrap;            /* allow wrapping on small screens */
   align-items: center;
-  justify-content: left; /* Center items horizontally */
-  position: relative;      /* For absolute positioning of bulk tools */
-  gap: 15px;
+  justify-content: center;    /* keep center on desktop & mobile */
+  gap: 12px 16px;
   font-size: 1.4em;
   font-weight: bold;
   margin: 10px 20px;
 }
 
-/* Right-side bulk tools next to counter */
+/* Select/Deselect All tools — sit next to counter, centered as well */
 .bulk-tools {
+  position: static;           /* was absolute; let it flow */
   display: flex;
   align-items: center;
   gap: 10px;
+  margin-left: 8px;           /* small breathing room from counter */
   font-size: 0.9em;
-  position: absolute;
-  right: 0;   /* stick to right edge of title-counter */
 }
 
+/* Slightly bigger touch target for the checkbox */
 .bulk-toggle input {
   transform: scale(1.2);
   vertical-align: middle;
+}
+
+/* Optional: on really narrow screens, let tools drop under the counter cleanly */
+@media (max-width: 420px) {
+  .title-counter { gap: 8px 12px; }
+  .bulk-tools { margin-left: 0; }
 }
 
 /* Global counter states */
