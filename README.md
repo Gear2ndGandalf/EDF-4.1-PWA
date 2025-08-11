@@ -13,4 +13,4 @@ This is a weapons checklist I tell you what.
 
 Note: The edf.css is currently formated for mobile devices. The layout will look weird on desktops or in landscape.
 
-This is meant to be used offline as I have yet to implement a login function for individual user accounts (if that is even possible with this).
+Apparently saved changes are stored in your browser, meaning if you clear browser data or change browsers you will be starting from scratch. Not a perfect system I know. Just use this on a seperate browser you don't have the need to clear data on.
