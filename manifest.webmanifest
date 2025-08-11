@@ -1,7 +1,7 @@
 {
   "name": "EDF 4.1 Weapons",
   "short_name": "EDF 4.1",
-  "start_url": "Main.html"
+  "start_url": "index.html"
   "display": "standalone",
   "scope": "./",
   "background_color": "#122",
