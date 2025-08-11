@@ -216,7 +216,8 @@ a.back-button:hover {
 /* Button stack — positioned halfway between logo and bottom tools */
 .button-list {
   position: absolute;
-  top: 25%;                      /* halfway-ish down the page */
+  top: 25%;
+  bottom: 25%;
   left: 50%;
   transform: translateX(-50%);
   width: 415px;
