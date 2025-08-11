@@ -205,7 +205,7 @@ a.back-button:hover {
   position: relative;
   display: flex;
   justify-content: center;
-  margin-top: 20px;   /* space from very top */
+  margin-top: 0px;   /* space from very top */
 }
 .gif-container img {
   max-width: 520px;
@@ -217,13 +217,13 @@ a.back-button:hover {
 /* Button stack — positioned halfway between logo and bottom tools */
 .button-list {
   position: absolute;
-  top: 45%;                      /* halfway-ish down the page */
+  top: 25%;                      /* halfway-ish down the page */
   left: 50%;
   transform: translateX(-50%);
   width: 415px;
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 2px;
   align-items: stretch;
 }
 
