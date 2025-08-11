@@ -222,9 +222,9 @@ a.back-button:hover {
   transform: translateX(-50%);
   display: flex;
   flex-direction: column;
+  justify-content: space-between;
   height: 55%;
   width: 415px;
-  gap: 2px;
 }
 
 /* Buttons unchanged */
