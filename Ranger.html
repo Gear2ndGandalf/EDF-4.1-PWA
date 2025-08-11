@@ -18,5 +18,12 @@
 
   <script src="edf-page.js"></script>
   <script src="Ranger.js"></script>
+  <script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./service-worker.js', { scope: './' });
+  });
+}
+</script>
 </body>
 </html>
