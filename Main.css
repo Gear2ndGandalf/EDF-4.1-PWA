@@ -8,4 +8,22 @@
   background: mediumseagreen; /* no color jump on hover */
   transform: scale(1.025);
 }
-/* (nothing extra for now, but you can add Main-only tweaks here) */
+/* Backup/restore tools on Main */
+.backup-tools{
+  position:absolute;
+  left:50%;
+  transform:translateX(-50%);
+  bottom:5%;
+  display:flex;
+  gap:12px;
+}
+.backup-tools button{
+  padding:10px 16px;
+  border:1px solid #fff;
+  background:rgba(0,0,0,.35);
+  font-size:1rem;
+  font-weight:bold;
+  cursor:pointer;
+}
+.backup-tools button:hover{ background:rgba(0,0,0,.55);
+}
