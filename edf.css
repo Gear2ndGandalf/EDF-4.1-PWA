@@ -241,9 +241,3 @@ a.back-button:hover {
   background: rgba(51,153,255,1);
   transform: scale(1.025);
 }
-
-/* Responsive tweaks */
-@media (max-width: 480px) {
-  .gif-container img { width: 86vw; max-width: 86vw; }
-  .button-list { width: 86vw; top: 48%; }
-}
