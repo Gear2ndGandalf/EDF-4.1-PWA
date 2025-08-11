@@ -106,17 +106,6 @@ a.back-button:hover {
   right: 0;   /* stick to right edge of title-counter */
 }
 
-.bulk-tools .mini{
-  padding:6px 10px;
-  border:1px solid #fff;
-  background:rgba(0,0,0,.35);
-  font-size:.9rem;
-  cursor:pointer;
-}
-
-.bulk-tools .mini:hover{ background:rgba(0,0,0,.55);
-}
-
 .bulk-toggle input {
   transform: scale(1.2);
   vertical-align: middle;
