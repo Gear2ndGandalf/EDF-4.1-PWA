@@ -6,7 +6,7 @@ const CACHE_VERSION = 'edf-cache-v4'; // ← bump when you deploy changes
 
 const APP_SHELL = [
   './',                        // root
-  './Main.html',
+  './index.html',
   './Ranger.html',
   './Wingdiver.html',
   './AirRaider.html',
@@ -53,7 +53,7 @@ self.addEventListener('activate', (event) => {
 });
 
 // Strategy:
-// - HTML navigations: cache-first; if offline and miss → Main.html
+// - HTML navigations: cache-first; if offline and miss → index.html
 // - Static assets (css/js/font/image): cache-first; if miss, fetch+cache
 // - Other requests: cache then network
 self.addEventListener('fetch', (event) => {
@@ -96,7 +96,7 @@ async function handleNavigation(req) {
     return res;
   } catch {
     // 3) Offline fallback
-    const fallback = await cache.match('./Main.html');
+    const fallback = await cache.match('./index.html');
     if (fallback) return fallback;
     return new Response('<h1>Offline</h1><p>Please reconnect.</p>', {
       headers: { 'Content-Type': 'text/html; charset=utf-8' }
