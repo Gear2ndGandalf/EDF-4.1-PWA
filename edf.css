@@ -202,33 +202,32 @@ a.back-button:hover {
 
 /* Main page (logo + big menu) */
 .gif-container {
-  position: relative;              /* no absolute weirdness */
-  top: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  margin-top: 12px;                /* small breathing room */
+  position: relative;
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;   /* space from very top */
 }
 .gif-container img {
-  max-width: 520px;                /* keep a sensible cap on desktop */
-  width: 80vw;                     /* responsive on mobile */
+  max-width: 520px;
+  width: 80vw;
   height: auto;
   display: block;
 }
 
-/* Keep buttons centered and evenly spaced (no stretching) */
+/* Button stack — positioned halfway between logo and bottom tools */
 .button-list {
-  position: relative;              /* flow in the page */
+  position: absolute;
+  top: 45%;                      /* halfway-ish down the page */
   left: 50%;
   transform: translateX(-50%);
-  margin: 24px 0 40px;             /* space below the logo, above bottom */
-  width: 415px;                    /* preserve your button width */
+  width: 415px;
   display: flex;
   flex-direction: column;
-  gap: 14px;                       /* fixed spacing instead of space-between */
-  align-items: stretch;            /* full width of the 415px container */
+  gap: 14px;
+  align-items: stretch;
 }
 
-/* Buttons unchanged (shape/size/color/hover) */
+/* Buttons unchanged */
 .button-list a {
   display: block;
   text-align: center;
@@ -247,8 +246,8 @@ a.back-button:hover {
   transform: scale(1.025);
 }
 
-/* Responsive nicety so the stack fits on narrow phones */
+/* Responsive tweaks */
 @media (max-width: 480px) {
   .gif-container img { width: 86vw; max-width: 86vw; }
-  .button-list { width: 86vw; }
+  .button-list { width: 86vw; top: 48%; }
 }
