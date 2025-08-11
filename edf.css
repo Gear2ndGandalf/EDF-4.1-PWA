@@ -216,15 +216,15 @@ a.back-button:hover {
 /* Button stack — positioned halfway between logo and bottom tools */
 .button-list {
   position: absolute;
-  top: 25%;
-  bottom: 25%;
+  top: 30%;
+  bottom: 15%;
   left: 50%;
   transform: translateX(-50%);
-  width: 415px;
   display: flex;
   flex-direction: column;
+  height: 55%;
+  width: 415px;
   gap: 2px;
-  align-items: stretch;
 }
 
 /* Buttons unchanged */
