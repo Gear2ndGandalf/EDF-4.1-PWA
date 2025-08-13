@@ -1,36 +1,50 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8"/>
-  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>EDF 4.1</title>
-  <link rel="stylesheet" href="Main.css">
-	<link rel="manifest" href="./manifest.webmanifest" type="application/manifest+json">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black">
-<meta name="apple-mobile-web-app-title" content="EDF 4.1">
-<link rel="apple-touch-icon" href="./icons/icon-180.png">
+
+  <!-- Styles -->
+  <link rel="stylesheet" href="edf.css">
+
+  <!-- PWA -->
+  <link rel="manifest" href="./manifest.webmanifest" />
+  <meta name="theme-color" content="#122" />
+
+  <!-- iOS PWA -->
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  <meta name="apple-mobile-web-app-title" content="EDF 4.1" />
+  <link rel="apple-touch-icon" href="./icons/icon-180.png" />
 </head>
 <body>
-  <div class="gif-container"><img src="EDF_Logo.gif" alt="EDF 4.1 The Shadow of New Despair"></div>
-  <div class="button-list">
+  <div class="gif-container">
+    <img src="EDF_Logo.gif" alt="EDF 4.1 The Shadow of New Despair" />
+  </div>
+
+  <div class="button-list font-mainbtn-titling">
     <a href="Ranger.html">Ranger</a>
     <a href="Wingdiver.html">Wingdiver</a>
     <a href="AirRaider.html">Air Raider</a>
     <a href="Fencer.html">Fencer</a>
   </div>
+
   <div class="backup-tools">
     <button id="export-btn" type="button">Export Progress</button>
     <button id="import-btn" type="button">Import Progress</button>
-    <input id="import-file" type="file" accept="application/json" hidden>
+    <input id="import-file" type="file" accept="application/json" hidden />
   </div>
-  <script src="Main.js"></script>
-	<script>
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('./service-worker.js', { scope: './' });
-  });
-}
-</script>
+
+  <!-- Scripts -->
+  <script src="Main.js" defer></script>
+  <script>
+    // Register Service Worker (single place)
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./service-worker.js', { scope: './' });
+      });
+    }
+  </script>
 </body>
 </html>

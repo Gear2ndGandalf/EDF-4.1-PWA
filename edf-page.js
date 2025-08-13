@@ -1,58 +1,85 @@
-// edf-page.js — shared builder for class pages
+/**
+ * edf-page.js
+ * -----------------------------------------------------------------------------
+ * Shared page builder for each EDF class page (Ranger / Wingdiver / AirRaider / Fencer).
+ *
+ * Responsibilities:
+ *  - Build the category UI (collapsible lists with counts)
+ *  - Smooth-scroll when opening/closing lists
+ *  - Track dirty state and enable/disable the Save button
+ *  - Persist progress to localStorage (including totals for Main/index)
+ *  - Provide "Select all" bulk toggle next to the global counter
+ *  - Keep Main/index buttons in sync via _total and _count keys
+ * -----------------------------------------------------------------------------
+ */
+
 function createEDFPage({ title, categories, storageKey }) {
-  const TOTAL_ALL = categories.reduce((s, c) => s + c.names.length, 0);
+  /* =========================================
+   *  Initialization & DOM wiring
+   *  - compute totals, cache main DOM nodes
+   * ========================================= */
+  const TOTAL_ALL = categories.reduce((sum, c) => sum + c.names.length, 0);
   localStorage.setItem(storageKey + '_total', String(TOTAL_ALL));
 
   const container = document.getElementById('categories-container');
   const saveBtn   = document.querySelector('.save-button');
 
-  /* ---------- Smooth scroll helpers ---------- */
-  const prefersNoMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches;
+  const CHECKED_SELECTOR = '#categories-container input[type="checkbox"]:checked';
+  const prefersNoMotion  = window.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches;
 
-  // Smooth-scroll a category header to the very top of the viewport.
+  /* =========================================
+   *  Smooth scrolling helpers
+   *  - bring header to top on open
+   *  - scroll to top before closing to avoid jump
+   * ========================================= */
   function scrollHeaderIntoView(headerEl, offset = 8) {
     if (!headerEl) return;
-    if (prefersNoMotion) {
-      const rect = headerEl.getBoundingClientRect();
-      window.scrollTo(0, window.pageYOffset + rect.top - offset);
-      return;
-    }
-    const rect = headerEl.getBoundingClientRect();
+    const rect    = headerEl.getBoundingClientRect();
     const targetY = window.pageYOffset + rect.top - offset;
-    window.scrollTo({ top: targetY, behavior: 'smooth' });
+    if (prefersNoMotion) {
+      window.scrollTo(0, targetY);
+    } else {
+      window.scrollTo({ top: targetY, behavior: 'smooth' });
+    }
   }
 
-  // Smooth-scroll to a Y position and resolve when we're basically there
   function smoothScrollTo(topTarget) {
     if (prefersNoMotion) {
       window.scrollTo(0, topTarget);
       return Promise.resolve();
     }
     return new Promise((resolve) => {
-      const tolerance = 2; // px
+      const tolerance = 2;
       window.scrollTo({ top: topTarget, behavior: 'smooth' });
-      function check() {
+      const tick = () => {
         if (Math.abs(window.scrollY - topTarget) <= tolerance) resolve();
-        else requestAnimationFrame(check);
-      }
-      requestAnimationFrame(check);
+        else requestAnimationFrame(tick);
+      };
+      requestAnimationFrame(tick);
     });
   }
 
-  /* ---------- Save button state ---------- */
+  /* =========================================
+   *  Save button state
+   *  - enable only when there are unsaved changes
+   * ========================================= */
   function setSaveDisabled(disabled) {
     if (!saveBtn) return;
     saveBtn.classList.toggle('is-disabled', disabled);
     saveBtn.setAttribute('aria-disabled', disabled ? 'true' : 'false');
   }
-  function isSaveDisabled() { return !!saveBtn && saveBtn.classList.contains('is-disabled'); }
+  function isSaveDisabled() {
+    return !!saveBtn && saveBtn.classList.contains('is-disabled');
+  }
 
-  // Signature of current checkbox state (stable across cats)
+  // Signature of current checkbox state (across all categories)
   let lastSavedSig = '';
   function computeSignature() {
     const parts = [];
     categories.forEach((cat, ci) => {
-      const boxes = document.querySelectorAll(`.category:nth-child(${ci + 1}) input[type="checkbox"]`);
+      const boxes = document.querySelectorAll(
+        `.category:nth-child(${ci + 1}) input[type="checkbox"]`
+      );
       let s = '';
       boxes.forEach(cb => { s += cb.checked ? '1' : '0'; });
       parts.push(s);
@@ -63,20 +90,26 @@ function createEDFPage({ title, categories, storageKey }) {
     setSaveDisabled(computeSignature() === lastSavedSig);
   }
 
-  /* ---------- Save (manual) ---------- */
+  /* =========================================
+   *  Save (manual)
+   *  - writes per-category selections
+   *  - updates saved count for Main/index
+   *  - shows toast and resets dirty state
+   * ========================================= */
   function saveList(showToast = true) {
     if (isSaveDisabled()) return;
 
     const data = {};
     categories.forEach((cat, ci) => {
       data[cat.id] = [];
-      const boxes = document.querySelectorAll(`.category:nth-child(${ci + 1}) input[type="checkbox"]`);
+      const boxes = document.querySelectorAll(
+        `.category:nth-child(${ci + 1}) input[type="checkbox"]`
+      );
       boxes.forEach((cb, i) => { if (cb.checked) data[cat.id].push(i); });
     });
     localStorage.setItem(storageKey, JSON.stringify(data));
 
-    // persist saved (committed) count for Main page
-    const savedChecked = document.querySelectorAll('#categories-container input[type="checkbox"]:checked').length;
+    const savedChecked = document.querySelectorAll(CHECKED_SELECTOR).length;
     localStorage.setItem(storageKey + '_count', String(savedChecked));
 
     if (showToast) showSaveToast();
@@ -93,11 +126,18 @@ function createEDFPage({ title, categories, storageKey }) {
     });
   }
 
-  /* ---------- Build UI ---------- */
+  /* =========================================
+   *  UI Builder
+   *  - build each category card, header, list
+   *  - wire open/close with smooth scroll
+   *  - wire checkbox change handlers
+   * ========================================= */
   categories.forEach(cat => {
+    // wrapper
     const wrap = document.createElement('div');
     wrap.className = 'category';
 
+    // header (title + per-category count)
     const header = document.createElement('div');
     header.className = 'category-header';
 
@@ -111,32 +151,36 @@ function createEDFPage({ title, categories, storageKey }) {
 
     header.replaceChildren(titleEl, countEl);
 
+    // open/close with smooth scrolling behavior
     header.addEventListener('click', async () => {
-      const body = wrap.querySelector('.category-items');
+      const body     = wrap.querySelector('.category-items');
       const willOpen = body.style.display !== 'block';
 
       if (willOpen) {
         body.style.display = 'block';
         scrollHeaderIntoView(header);
       } else {
-        // scroll first, then collapse to avoid jump
-        await smoothScrollTo(0);
+        await smoothScrollTo(0);       // avoid jump
         body.style.display = 'none';
       }
     });
 
+    // list body
     const body = document.createElement('div');
     body.className = 'category-items';
+
     cat.names.forEach(name => {
       const label = document.createElement('label');
-      const cb = document.createElement('input');
-      cb.type = 'checkbox';
+      const cb    = document.createElement('input');
+      cb.type     = 'checkbox';
+
       cb.addEventListener('change', () => {
         updateCount(cat.id, cat.names.length);
         updateGlobalCount();
         refreshSelectAllToggle();
-        refreshDirty(); // enable/disable Save based on true diff
+        refreshDirty();
       });
+
       label.appendChild(cb);
       label.append(` ${name}`);
       body.appendChild(label);
@@ -147,9 +191,13 @@ function createEDFPage({ title, categories, storageKey }) {
     container.appendChild(wrap);
   });
 
-  /* ---------- Counters ---------- */
+  /* =========================================
+   *  Counters
+   *  - per-category count
+   *  - global count (updates color state)
+   * ========================================= */
   function updateCount(id, total) {
-    const idx = categories.findIndex(c => c.id === id);
+    const idx    = categories.findIndex(c => c.id === id);
     const catDiv = container.querySelector(`.category:nth-child(${idx + 1})`);
     const checked = catDiv.querySelectorAll('input[type="checkbox"]:checked').length;
     catDiv.querySelector('.header-count').textContent = `${checked}/${total}`;
@@ -159,7 +207,7 @@ function createEDFPage({ title, categories, storageKey }) {
   function updateGlobalCount() {
     const el = document.getElementById('global-count');
     if (!el) return;
-    const checked = document.querySelectorAll('#categories-container input[type="checkbox"]:checked').length;
+    const checked = document.querySelectorAll(CHECKED_SELECTOR).length;
     el.textContent = `${checked}/${TOTAL_ALL}`;
     el.classList.remove('low', 'medium', 'complete');
     if (checked >= TOTAL_ALL) el.classList.add('complete');
@@ -168,7 +216,10 @@ function createEDFPage({ title, categories, storageKey }) {
   }
   window.updateGlobalCount = updateGlobalCount;
 
-  /* ---------- Toast ---------- */
+  /* =========================================
+   *  Toast
+   *  - center overlay that auto-hides
+   * ========================================= */
   function showSaveToast() {
     const t = document.getElementById('toast');
     if (!t) return;
@@ -177,8 +228,13 @@ function createEDFPage({ title, categories, storageKey }) {
   }
   window.showSaveToast = showSaveToast;
 
-  /* ---------- Select / Deselect All (next to counter) ---------- */
+  /* =========================================
+   *  Bulk select toggle
+   *  - injects a "Select all" checkbox next to the counter
+   *  - syncs indeterminate/checked state as you click
+   * ========================================= */
   injectSelectAllToggle();
+
   function injectSelectAllToggle() {
     const bar = document.querySelector('.title-counter');
     if (!bar) return;
@@ -215,19 +271,26 @@ function createEDFPage({ title, categories, storageKey }) {
     const toggle = document.getElementById('select-all-toggle');
     if (!toggle) return;
     const boxes   = document.querySelectorAll('#categories-container input[type="checkbox"]');
-    const checked = document.querySelectorAll('#categories-container input[type="checkbox"]:checked');
+    const checked = document.querySelectorAll(CHECKED_SELECTOR);
     toggle.checked = (boxes.length > 0 && checked.length === boxes.length);
     toggle.indeterminate = (checked.length > 0 && checked.length < boxes.length);
   }
 
-  /* ---------- Load (establish saved baseline) ---------- */
+  /* =========================================
+   *  Load (establish saved baseline)
+   *  - restore saved selections
+   *  - compute counts & sync Main/index totals
+   *  - mark page as clean (save disabled)
+   * ========================================= */
   function loadList() {
     let data = {};
     try { data = JSON.parse(localStorage.getItem(storageKey) || '{}'); } catch {}
 
     categories.forEach((cat, ci) => {
       const saved = data[cat.id] || [];
-      const boxes = document.querySelectorAll(`.category:nth-child(${ci + 1}) input[type="checkbox"]`);
+      const boxes = document.querySelectorAll(
+        `.category:nth-child(${ci + 1}) input[type="checkbox"]`
+      );
       saved.forEach(i => { if (boxes[i]) boxes[i].checked = true; });
       updateCount(cat.id, cat.names.length);
     });
@@ -235,9 +298,9 @@ function createEDFPage({ title, categories, storageKey }) {
     updateGlobalCount();
     refreshSelectAllToggle();
 
-    // keep Main in sync with authoritative totals & saved counts
+    // Keep Main/index in sync with authoritative totals & saved counts
     localStorage.setItem(storageKey + '_total', String(TOTAL_ALL));
-    const savedChecked = document.querySelectorAll('#categories-container input[type="checkbox"]:checked').length;
+    const savedChecked = document.querySelectorAll(CHECKED_SELECTOR).length;
     localStorage.setItem(storageKey + '_count', String(savedChecked));
 
     lastSavedSig = computeSignature();
