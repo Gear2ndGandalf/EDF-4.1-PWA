@@ -2,7 +2,7 @@
 // ----------------------------------------------------
 // Full pre-cache of app shell + cache-first runtime
 // ----------------------------------------------------
-const CACHE_VERSION = 'edf-precache-v22'; // bump when files change
+const CACHE_VERSION = 'edf-precache-v23'; // bump when files change
 
 const PRECACHE_URLS = [
   './',

@@ -38,41 +38,53 @@ function scheduleRefresh() {
 function buildExportPayload() {
   const payload = { version: 1, exportedAt: new Date().toISOString(), data: {} };
   STORAGE_MAP.forEach(({ key }) => {
-    payload.data[key]           = safeParse(localStorage.getItem(key)) || {};
-    payload.data[`${key}_count`] = localStorage.getItem(`${key}_count`) ?? '0';
-    payload.data[`${key}_total`] = localStorage.getItem(`${key}_total`) ?? '0';
+    payload.data[key]             = safeParse(localStorage.getItem(key)) || {};
+    payload.data[`${key}_count`]  = localStorage.getItem(`${key}_count`) ?? '0';
+    payload.data[`${key}_total`]  = localStorage.getItem(`${key}_total`) ?? '0';
   });
   return payload;
 }
 
-function exportAllProgress() {
+async function exportAllProgress() {
   const payload = JSON.stringify(buildExportPayload(), null, 2);
   const blob = new Blob([payload], { type: 'application/json' });
-  const file = new File([blob], 'edf-progress.json', { type: 'application/json' });
+  const fileName = 'edf-progress.json';
+  const file = new File([blob], fileName, { type: 'application/json' });
 
-  // Prefer the Web Share API with files (works well on iOS, including Opera GX)
+  // Mobile-first: Web Share with file
   if (navigator.canShare && navigator.canShare({ files: [file] })) {
-    navigator.share({
-      files: [file],
-      title: 'EDF 4.1 Progress Backup',
-      text: 'Your EDF 4.1 progress backup file.',
-    }).catch(() => {
-      // If the user cancels share, do nothing
-    });
-    return;
+    try {
+      await navigator.share({
+        files: [file],
+        title: 'EDF 4.1 Progress Backup',
+        text: 'Your EDF 4.1 progress backup file.',
+      });
+      return;
+    } catch { /* user canceled or share not available — fall through */ }
   }
 
-  // Fallback: programmatic download (works on desktop + most non-iOS browsers)
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = 'edf-progress.json';
-  a.rel = 'noopener';
-  a.style.display = 'none';
-  document.body.appendChild(a);
-  a.click();
-  a.remove();
-  try { URL.revokeObjectURL(url); } catch {}
+  // Desktop Chromium: File System Access API
+  if (window.showSaveFilePicker) {
+    try {
+      const handle = await showSaveFilePicker({
+        suggestedName: fileName,
+        types: [{ description: 'JSON', accept: { 'application/json': ['.json'] } }]
+      });
+      const writable = await handle.createWritable();
+      await writable.write(blob);
+      await writable.close();
+      return;
+    } catch { /* user canceled — fall through */ }
+  }
+
+  // Last resort: open JSON in new tab to save manually
+	try {
+    const dataUrl = 'data:application/json;charset=utf-8,' + encodeURIComponent(payload);
+    window.open(dataUrl, '_blank', 'noopener');
+  } catch {
+    alert('Could not trigger a download. As a last resort, copy the JSON printed to the console.');
+    try { console.log(payload); } catch {}
+  }
 }
 
 function importAllProgressFromFile(file) {
