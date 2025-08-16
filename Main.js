@@ -77,6 +77,22 @@ async function exportAllProgress() {
     } catch { /* user canceled — fall through */ }
   }
 
+// Classic download
+  let url = '';
+  try {
+    url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = fileName;
+    a.rel = 'noopener';
+    a.style.display = 'none';
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    requestAnimationFrame(() => { try { URL.revokeObjectURL(url); } catch {} });
+    return;
+  } catch { /* fall through */ }
+
   // Last resort: open JSON in new tab to save manually
 	try {
     const dataUrl = 'data:application/json;charset=utf-8,' + encodeURIComponent(payload);
